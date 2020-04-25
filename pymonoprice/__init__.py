@@ -8,47 +8,54 @@ from serial_asyncio import create_serial_connection
 from threading import RLock
 
 _LOGGER = logging.getLogger(__name__)
-ZONE_PATTERN = re.compile('#>(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)')
+ZONE_PATTERN = re.compile('#(\dZS) (VO\d\d) (PO\d) (MU\d) (IS\d)\+')
 
-EOL = b'\r\n#'
+EOL = b'+'
 LEN_EOL = len(EOL)
 TIMEOUT = 2  # Number of seconds before serial operation timeout
 
+TREBLE_DEFAULT = 7
+BASS_DEFAULT = 7
+BALANCE_DEFAULT = 32
 
 class ZoneStatus(object):
+
     def __init__(self,
                  zone: int,
-                 pa: bool,
+                 volume: int,   # 0 - 38
                  power: bool,
-                 mute: bool,
-                 do_not_disturb: bool,
-                 volume: int,  # 0 - 38
-                 treble: int,  # 0 -> -7,  14-> +7
-                 bass: int,  # 0 -> -7,  14-> +7
-                 balance: int,  # 00 - left, 10 - center, 20 right
-                 source: int,
-                 keypad: bool):
+                 mute: bool,    # 1 = muted, shows muted if off
+                 source: int,   # 0 = BUS, 1 = LINE
+                ):
+
         self.zone = zone
-        self.pa = bool(pa)
+        self.volume = volume
         self.power = bool(power)
         self.mute = bool(mute)
-        self.do_not_disturb = bool(do_not_disturb)
-        self.volume = volume
-        self.treble = treble
-        self.bass = bass
-        self.balance = balance
         self.source = source
-        self.keypad = bool(keypad)
+
+        # These aren't passed in the Zone Status response, lets worry about them later
+        # self.treble = treble
+        # self.bass = bass
+        # self.balance = balance
+        self.treble = TREBLE_DEFAULT
+        self.bass = BASS_DEFAULT
+        self.balance = BALANCE_DEFAULT
 
     @classmethod
     def from_string(cls, string: str):
+
         if not string:
             return None
+        
+        # Still use this to validate the string, though my regex isn't good enough to properly parse this string to array =(
         match = re.search(ZONE_PATTERN, string)
         if not match:
             return None
-        return ZoneStatus(*[int(m) for m in match.groups()])
 
+        parts = re.sub(r'[^0-9 ]+','',string).split()
+
+        return ZoneStatus( *[int(m) for m in parts])
 
 class Monoprice(object):
     """
@@ -130,40 +137,40 @@ class Monoprice(object):
 # Helpers
 
 def _format_zone_status_request(zone: int) -> bytes:
-    return '?{}\r'.format(zone).encode()
+    return '?{}ZS+'.format(zone).encode()
 
 
 def _format_set_power(zone: int, power: bool) -> bytes:
-    return '<{}PR{}\r'.format(zone, '01' if power else '00').encode()
+    return '!{}PR{}+'.format(zone, '1' if power else '0').encode()
 
 
 def _format_set_mute(zone: int, mute: bool) -> bytes:
-    return '<{}MU{}\r'.format(zone, '01' if mute else '00').encode()
+    return '!{}MU{}+'.format(zone, '1' if mute else '0').encode()
 
 
 def _format_set_volume(zone: int, volume: int) -> bytes:
     volume = int(max(0, min(volume, 38)))
-    return '<{}VO{:02}\r'.format(zone, volume).encode()
+    return '!{}VO{:02}+'.format(zone, volume).encode()
 
 
 def _format_set_treble(zone: int, treble: int) -> bytes:
     treble = int(max(0, min(treble, 14)))
-    return '<{}TR{:02}\r'.format(zone, treble).encode()
+    return '!{}TR{:02}+'.format(zone, treble).encode()
 
 
 def _format_set_bass(zone: int, bass: int) -> bytes:
     bass = int(max(0, min(bass, 14)))
-    return '<{}BS{:02}\r'.format(zone, bass).encode()
+    return '!{}BS{:02}+'.format(zone, bass).encode()
 
 
 def _format_set_balance(zone: int, balance: int) -> bytes:
     balance = max(0, min(balance, 20))
-    return '<{}BL{:02}\r'.format(zone, balance).encode()
+    return '!{}BL{:02}+'.format(zone, balance).encode()
 
 
 def _format_set_source(zone: int, source: int) -> bytes:
     source = int(max(1, min(source, 6)))
-    return '<{}CH{:02}\r'.format(zone, source).encode()
+    return '!{}CH{:02}+'.format(zone, source).encode()
 
 
 def get_monoprice(port_url):
