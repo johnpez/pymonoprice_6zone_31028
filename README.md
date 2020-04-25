@@ -10,7 +10,7 @@ This is for use with [Home-Assistant](http://home-assistant.io)
 
 ## Usage
 ```python
-from pymonoprice import get_monoprice
+from pymonoprice_6zone_31028 import get_monoprice
 
 monoprice = get_monoprice('/dev/ttyUSB0')
 # Valid zones are 1-6 for main monoprice amplifier
@@ -57,7 +57,7 @@ With `asyncio` flavor all methods of Monoprice object are coroutines.
 
 ```python
 import asyncio
-from pymonoprice import get_async_monoprice
+from pymonoprice_6zone_31028 import get_async_monoprice
 
 async def main(loop):
     monoprice = await get_async_monoprice('/dev/ttyUSB0', loop)

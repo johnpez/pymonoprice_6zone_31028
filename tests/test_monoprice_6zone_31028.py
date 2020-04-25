@@ -2,7 +2,7 @@ import unittest
 
 import serial
 
-from pymonoprice import (get_monoprice, get_async_monoprice, ZoneStatus)
+from pymonoprice_6zone_31028 import (get_monoprice, get_async_monoprice, ZoneStatus)
 from tests import create_dummy_port
 import asyncio
 
