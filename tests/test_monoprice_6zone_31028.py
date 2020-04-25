@@ -25,16 +25,13 @@ class TestMonoprice(unittest.TestCase):
         self.responses[b'?1+'] = b'+#>1100010000131112100401+#'
         status = self.monoprice.zone_status(1)
         self.assertEqual(11, status.zone)
-        self.assertFalse(status.pa)
         self.assertTrue(status.power)
         self.assertFalse(status.mute)
-        self.assertFalse(status.do_not_disturb)
         self.assertEqual(13, status.volume)
         self.assertEqual(11, status.treble)
         self.assertEqual(12, status.bass)
         self.assertEqual(10, status.balance)
         self.assertEqual(4, status.source)
-        self.assertTrue(status.keypad)
         self.assertEqual(0, len(self.responses))
 
     def test_set_power(self):

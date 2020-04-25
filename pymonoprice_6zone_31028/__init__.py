@@ -165,12 +165,12 @@ def _format_set_bass(zone: int, bass: int) -> bytes:
 
 def _format_set_balance(zone: int, balance: int) -> bytes:
     balance = max(0, min(balance, 20))
-    return '!{}BL{:02}+'.format(zone, balance).encode()
+    return '!{}BA{:02}+'.format(zone, balance).encode()
 
 
 def _format_set_source(zone: int, source: int) -> bytes:
     source = int(max(1, min(source, 6)))
-    return '!{}CH{:02}+'.format(zone, source).encode()
+    return '!{}IS{:02}+'.format(zone, source).encode()
 
 
 def get_monoprice(port_url):
