@@ -61,7 +61,7 @@ from pymonoprice_6zone_31028 import get_async_monoprice
 
 async def main(loop):
     monoprice = await get_async_monoprice('/dev/ttyUSB0', loop)
-    zone_status = await monoprice.zone_status(11)
+    zone_status = await monoprice.zone_status(1)
     if zone_status.power:
         await monoprice.set_power(zone_status.zone, False)
 

@@ -1,5 +1,5 @@
 [run]
-source = pymonoprice
+source = pymonoprice_6zone_31028
 
 [report]
 # Regexes for lines to exclude from consideration

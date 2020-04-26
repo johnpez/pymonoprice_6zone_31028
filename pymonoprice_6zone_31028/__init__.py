@@ -65,7 +65,7 @@ class Monoprice(object):
     def zone_status(self, zone: int):
         """
         Get the structure representing the status of the zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :return: status of the zone or None
         """
         raise NotImplemented()
@@ -73,7 +73,7 @@ class Monoprice(object):
     def set_power(self, zone: int, power: bool):
         """
         Turn zone on or off
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param power: True to turn on, False to turn off
         """
         raise NotImplemented()
@@ -81,7 +81,7 @@ class Monoprice(object):
     def set_mute(self, zone: int, mute: bool):
         """
         Mute zone on or off
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param mute: True to mute, False to unmute
         """
         raise NotImplemented()
@@ -89,7 +89,7 @@ class Monoprice(object):
     def set_volume(self, zone: int, volume: int):
         """
         Set volume for zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param volume: integer from 0 to 38 inclusive
         """
         raise NotImplemented()
@@ -97,7 +97,7 @@ class Monoprice(object):
     def set_treble(self, zone: int, treble: int):
         """
         Set treble for zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param treble: integer from 0 to 14 inclusive, where 0 is -7 treble and 14 is +7
         """
         raise NotImplemented()
@@ -105,7 +105,7 @@ class Monoprice(object):
     def set_bass(self, zone: int, bass: int):
         """
         Set bass for zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param bass: integer from 0 to 14 inclusive, where 0 is -7 bass and 14 is +7
         """
         raise NotImplemented()
@@ -113,7 +113,7 @@ class Monoprice(object):
     def set_balance(self, zone: int, balance: int):
         """
         Set balance for zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param balance: integer from 0 to 20 inclusive, where 0 is -10(left), 0 is center and 20 is +10 (right)
         """
         raise NotImplemented()
@@ -121,7 +121,7 @@ class Monoprice(object):
     def set_source(self, zone: int, source: int):
         """
         Set source for zone
-        :param zone: zone 11..16, 21..26, 31..36
+        :param zone: zone 1..6
         :param source: integer from 0 to 6 inclusive
         """
         raise NotImplemented()
