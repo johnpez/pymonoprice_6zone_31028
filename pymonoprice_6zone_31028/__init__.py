@@ -164,12 +164,12 @@ def _format_set_bass(zone: int, bass: int) -> bytes:
 
 
 def _format_set_balance(zone: int, balance: int) -> bytes:
-    balance = max(0, min(balance, 20))
+    balance = max(0, min(balance, 63))
     return '!{}BA{:02}+'.format(zone, balance).encode()
 
 
 def _format_set_source(zone: int, source: int) -> bytes:
-    source = int(max(1, min(source, 6)))
+    source = int(max(0, min(source, 1)))
     return '!{}IS{:02}+'.format(zone, source).encode()
 
 

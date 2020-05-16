@@ -26,7 +26,7 @@ print('Bass = {}'.format(zone_status.bass))
 print('Balance = {}'.format(zone_status.balance))
 print('Source = {}'.format(zone_status.source))
 
-# Turn off zone #11
+# Turn off zone #1
 monoprice.set_power(1, False)
 
 # Mute zone #12
