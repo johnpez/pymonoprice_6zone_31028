@@ -354,7 +354,7 @@ def get_async_monoprice(port_url, loop):
             self._loop = loop
             self._lock = asyncio.Lock()
             self._transport = None
-            self._connected = asyncio.Event(loop=loop)
+            self._connected = asyncio.Event()
             self.q = asyncio.Queue(loop=loop)
 
         def connection_made(self, transport):
