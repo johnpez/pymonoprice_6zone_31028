@@ -295,46 +295,48 @@ async def get_async_monoprice(port_url, loop):
         @locked_coro
         async def zone_status(self, zone: int):
             # Ignore first 6 bytes as they will contain 3 byte command and 3 bytes of EOL
-            string = yield from self._protocol.send(_format_zone_status_request(zone), skip=6)
+            string = await self._protocol.send(
+                _format_zone_status_request(zone), skip=6
+            )
             return ZoneStatus.from_string(string)
 
         @locked_coro
         async def set_power(self, zone: int, power: bool):
-            yield from self._protocol.send(_format_set_power(zone, power))
+            await self._protocol.send(_format_set_power(zone, power))
 
         @locked_coro
         async def set_mute(self, zone: int, mute: bool):
-            yield from self._protocol.send(_format_set_mute(zone, mute))
+            await self._protocol.send(_format_set_mute(zone, mute))
 
         @locked_coro
         async def set_volume(self, zone: int, volume: int):
-            yield from self._protocol.send(_format_set_volume(zone, volume))
+            await self._protocol.send(_format_set_volume(zone, volume))
 
         @locked_coro
         async def set_treble(self, zone: int, treble: int):
-            yield from self._protocol.send(_format_set_treble(zone, treble))
+            await self._protocol.send(_format_set_treble(zone, treble)))
 
         @locked_coro
         async def set_bass(self, zone: int, bass: int):
-            yield from self._protocol.send(_format_set_bass(zone, bass))
+           await self._protocol.send(_format_set_bass(zone, bass))
 
         @locked_coro
         async def set_balance(self, zone: int, balance: int):
-            yield from self._protocol.send(_format_set_balance(zone, balance))
+            await self._protocol.send(_format_set_balance(zone, balance))
 
         @locked_coro
         async def set_source(self, zone: int, source: int):
-            yield from self._protocol.send(_format_set_source(zone, source))
+            await self._protocol.send(_format_set_source(zone, source))
 
         @locked_coro
         async def restore_zone(self, status: ZoneStatus):
-            yield from self._protocol.send(_format_set_power(status.zone, status.power))
-            yield from self._protocol.send(_format_set_mute(status.zone, status.mute))
-            yield from self._protocol.send(_format_set_volume(status.zone, status.volume))
-            yield from self._protocol.send(_format_set_treble(status.zone, status.treble))
-            yield from self._protocol.send(_format_set_bass(status.zone, status.bass))
-            yield from self._protocol.send(_format_set_balance(status.zone, status.balance))
-            yield from self._protocol.send(_format_set_source(status.zone, status.source))
+            await self._protocol.send(_format_set_power(status.zone, status.power))
+            await self._protocol.send(_format_set_mute(status.zone, status.mute))
+            await self._protocol.send(_format_set_volume(status.zone, status.volume))
+            await self._protocol.send(_format_set_treble(status.zone, status.treble))
+            await self._protocol.send(_format_set_bass(status.zone, status.bass))
+            await self._protocol.send(_format_set_balance(status.zone, status.balance))
+            await self._protocol.send(_format_set_source(status.zone, status.source))
 
     class MonopriceProtocol(asyncio.Protocol):
         def __init__(self, loop):
@@ -354,10 +356,10 @@ async def get_async_monoprice(port_url, loop):
             asyncio.ensure_future(self.q.put(data), loop=self._loop)
 
         async def send(self, request: bytes, skip=0):
-            yield from self._connected.wait()
+            await self._connected.wait()
             result = bytearray()
             # Only one transaction at a time
-            with (yield from self._lock):
+            async with self._lock::
                 self._transport.serial.reset_output_buffer()
                 self._transport.serial.reset_input_buffer()
                 while not self.q.empty():
@@ -365,7 +367,7 @@ async def get_async_monoprice(port_url, loop):
                 self._transport.write(request)
                 try:
                     while True:
-                        result += yield from asyncio.wait_for(self.q.get(), TIMEOUT, loop=self._loop)
+                        result += await asyncio.wait_for(self.q.get(), TIMEOUT, loop=self._loop)
                         if len(result) > skip and result[-LEN_EOL:] == EOL:
                             ret = bytes(result)
                             _LOGGER.debug('Received "%s"', ret)
@@ -374,6 +376,6 @@ async def get_async_monoprice(port_url, loop):
                     _LOGGER.error("Timeout during receiving response for command '%s', received='%s'", request, result)
                     raise
 
-    _, protocol = yield from create_serial_connection(loop, functools.partial(MonopriceProtocol, loop),
+    _, protocol = await create_serial_connection(loop, functools.partial(MonopriceProtocol, loop),
                                                       port_url, baudrate=9600)
     return MonopriceAsync(protocol)
