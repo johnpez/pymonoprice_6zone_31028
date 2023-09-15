@@ -314,7 +314,7 @@ async def get_async_monoprice(port_url, loop):
 
         @locked_coro
         async def set_treble(self, zone: int, treble: int):
-            await self._protocol.send(_format_set_treble(zone, treble)))
+            await self._protocol.send(_format_set_treble(zone, treble))
 
         @locked_coro
         async def set_bass(self, zone: int, bass: int):
