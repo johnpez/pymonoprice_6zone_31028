@@ -359,7 +359,7 @@ async def get_async_monoprice(port_url, loop):
             await self._connected.wait()
             result = bytearray()
             # Only one transaction at a time
-            async with self._lock::
+            async with self._lock:
                 self._transport.serial.reset_output_buffer()
                 self._transport.serial.reset_input_buffer()
                 while not self.q.empty():
