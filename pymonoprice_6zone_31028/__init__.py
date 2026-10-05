@@ -8,7 +8,7 @@ from serial_asyncio import create_serial_connection
 from threading import RLock
 
 _LOGGER = logging.getLogger(__name__)
-ZONE_PATTERN = re.compile('#(\dZS) (VO\d\d) (PO\d) (MU\d) (IS\d)\+')
+ZONE_PATTERN = re.compile(r'#(\dZS) (VO\d{1,2}) (PO\d) (MU\d) (IS\d)\+')
 
 EOL = b'+'
 LEN_EOL = len(EOL)
